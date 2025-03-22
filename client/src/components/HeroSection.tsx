@@ -86,7 +86,7 @@ const HeroSection = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl opacity-20 animate-pulse"></div>
               <img 
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
+                src="/src/assets/images/profile.jpg" 
                 alt={personalInfo.name} 
                 className="w-72 h-72 object-cover rounded-full border-4 border-white shadow-xl relative z-10"
               />

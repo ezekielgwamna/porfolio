@@ -28,8 +28,8 @@ const AboutSection = () => {
             transition={{ duration: 0.5 }}
           >
             <img 
-              src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2072&q=80" 
-              alt="Ezekiel working" 
+              src="/src/assets/images/profile.jpg" 
+              alt="Ezekiel Funom Gwamna" 
               className="rounded-lg shadow-lg w-full object-cover h-80 md:h-96"
             />
           </motion.div>
