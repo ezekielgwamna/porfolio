@@ -68,6 +68,12 @@ export const skills = {
     { name: "MongoDB", percentage: 80 },
     { name: "SQL/PostgreSQL", percentage: 75 }
   ],
+  artificialIntelligence: [
+    { name: "Machine Learning", percentage: 85 },
+    { name: "Natural Language Processing", percentage: 80 },
+    { name: "Computer Vision", percentage: 75 },
+    { name: "Deep Learning", percentage: 70 }
+  ],
   devTools: [
     "Git & GitHub",
     "Command Line",

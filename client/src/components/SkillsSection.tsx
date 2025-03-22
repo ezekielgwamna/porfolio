@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { skills, Skill } from "@/constants/data";
-import { Cloud, Code, Terminal, Wrench } from "lucide-react";
+import { Cloud, Code, Terminal, Wrench, Brain } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const SkillBar = ({ skill }: { skill: Skill }) => {
@@ -92,10 +92,20 @@ const SkillsSection = () => {
             </div>
             
             {/* Backend */}
-            <div>
+            <div className="mb-8">
               <h4 className="font-semibold mb-4 text-lg text-primary/80">Backend Development</h4>
               <div className="space-y-4">
                 {skills.backend.map((skill) => (
+                  <SkillBar key={skill.name} skill={skill} />
+                ))}
+              </div>
+            </div>
+
+            {/* Artificial Intelligence */}
+            <div>
+              <h4 className="font-semibold mb-4 text-lg text-primary/80">Artificial Intelligence</h4>
+              <div className="space-y-4">
+                {skills.artificialIntelligence.map((skill) => (
                   <SkillBar key={skill.name} skill={skill} />
                 ))}
               </div>

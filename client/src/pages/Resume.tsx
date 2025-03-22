@@ -95,6 +95,10 @@ const skills = [
     items: ["React", "Next.js", "Node.js", "Express", "Django", "TailwindCSS", "Redux", "GraphQL"]
   },
   {
+    category: "Artificial Intelligence",
+    items: ["Machine Learning", "Natural Language Processing", "Computer Vision", "Deep Learning", "TensorFlow", "PyTorch"]
+  },
+  {
     category: "Tools & Platforms",
     items: ["Git", "Docker", "Kubernetes", "AWS", "Google Cloud", "CI/CD", "Webpack", "Jest"]
   },
@@ -148,7 +152,8 @@ const ResumePage = () => {
             <h2 className="text-2xl font-bold mb-4">Professional Summary</h2>
             <p className="text-gray-700 leading-relaxed">
               Full-stack software engineer with over 7 years of experience designing and developing web applications 
-              across various domains including e-commerce, fintech, and digital marketing. Experienced in all phases 
+              across various domains including e-commerce, fintech, and digital marketing. Skilled in artificial intelligence
+              and machine learning technologies with a focus on practical applications. Experienced in all phases 
               of the software development lifecycle with expertise in React, Node.js, and cloud infrastructure. 
               Strong problem-solving abilities and a passion for writing clean, efficient, and maintainable code.
             </p>
