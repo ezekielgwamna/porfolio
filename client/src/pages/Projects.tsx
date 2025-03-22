@@ -1,54 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, ArrowRight } from "lucide-react";
-import { Link } from "wouter";
+import { Github, ExternalLink, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { projects } from "@/constants/data";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { projects, Project } from "@/constants/data";
-
-// Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 }
-  }
-};
 
 const ProjectsPage = () => {
-  const [filter, setFilter] = useState<string | null>(null);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [filteredProjects, setFilteredProjects] = useState(projects);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Get all unique categories
-  const categories = Array.from(
-    new Set(projects.map((project) => project.category))
-  );
+  const categories = Array.from(new Set(projects.map(project => project.category)));
 
-  // Filter projects based on selected category
-  const filteredProjects = filter
-    ? projects.filter((project) => project.category === filter)
-    : projects;
+  useEffect(() => {
+    // Filter projects based on search term and category
+    const results = projects.filter(project => {
+      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.technologies.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesCategory = selectedCategory === null || project.category === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+    
+    setFilteredProjects(results);
+  }, [searchTerm, selectedCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -66,123 +47,139 @@ const ProjectsPage = () => {
               My Projects
             </motion.h1>
             <div className="h-1 w-20 bg-primary mx-auto mb-6 rounded-full"></div>
-            <p className="text-gray-600 max-w-3xl mx-auto mb-8">
-              Explore my latest work and technical projects. Each project showcases different skills
-              and technologies I've worked with.
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              Explore my latest projects and applications. Each project represents my commitment to clean code, 
+              intuitive user experiences, and solving real-world problems.
             </p>
-            
-            {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-2 mb-12">
-              <Button
-                variant={filter === null ? "default" : "outline"}
-                onClick={() => setFilter(null)}
-                className="rounded-full"
-              >
-                All
-              </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={filter === category ? "default" : "outline"}
-                  onClick={() => setFilter(category)}
-                  className="rounded-full"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
           </div>
           
-          {/* Projects Grid */}
+          {/* Filters */}
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            className="mb-12 flex flex-col md:flex-row gap-4 items-center justify-between bg-white rounded-xl shadow-md p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {filteredProjects.map((project, index) => (
-              <motion.div 
-                key={index}
-                variants={itemVariants}
-                onMouseEnter={() => setHoveredProject(index)}
-                onMouseLeave={() => setHoveredProject(null)}
-                className="relative"
-              >
-                <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg">
-                  <div className="aspect-video relative overflow-hidden">
-                    <img
+            <div className="w-full md:w-1/2 relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search projects by name, description or technology..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="w-full md:w-auto">
+              <div className="flex items-center gap-2 flex-wrap justify-center md:justify-end">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <span className="text-sm text-gray-500 mr-2">Filter by:</span>
+                
+                <Badge
+                  variant={selectedCategory === null ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedCategory(null)}
+                >
+                  All
+                </Badge>
+                
+                {categories.map(category => (
+                  <Badge
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => setSelectedCategory(
+                      selectedCategory === category ? null : category
+                    )}
+                  >
+                    {category}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* Projects Grid */}
+          {filteredProjects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProjects.map((project, index) => (
+                <motion.div
+                  key={project.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white rounded-xl shadow-md overflow-hidden h-full flex flex-col"
+                >
+                  <div className="relative group aspect-video overflow-hidden">
+                    <img 
                       src={project.imageUrl}
                       alt={project.title}
-                      className="object-cover w-full h-full transition-transform duration-500 ease-in-out"
-                      style={{
-                        transform: hoveredProject === index ? 'scale(1.05)' : 'scale(1)'
-                      }}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/60"></div>
-                    <Badge className="absolute top-3 right-3">{project.category}</Badge>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                      <div className="flex gap-2 mb-2">
+                        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary text-white px-3 py-1 rounded-full">Live Demo</a>
+                        <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-900 text-white px-3 py-1 rounded-full">Source Code</a>
+                      </div>
+                    </div>
+                    
+                    <Badge className="absolute top-3 right-3 z-10" variant="secondary">
+                      {project.category}
+                    </Badge>
                   </div>
                   
-                  <CardHeader className="pb-2">
-                    <CardTitle>{project.title}</CardTitle>
-                  </CardHeader>
-                  
-                  <CardContent className="flex-grow">
-                    <CardDescription className="text-gray-600 mb-4">
-                      {project.description}
-                    </CardDescription>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                    <p className="text-gray-600 mb-4 flex-grow">{project.description}</p>
                     
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {project.technologies.map((tech, idx) => (
-                        <Badge key={idx} variant="outline" className="bg-primary/10 text-primary border-0">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map(tech => (
+                        <Badge key={tech} variant="outline" className="text-xs">
                           {tech}
                         </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                  
-                  <CardFooter className="flex justify-between pt-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
-                        <Github size={16} /> Code
-                      </a>
-                    </Button>
                     
-                    <Button size="sm" asChild>
-                      <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
-                        <ExternalLink size={16} /> Demo
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-          
-          {/* Project Pagination/Navigation */}
-          {filteredProjects.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No projects found for this category.</p>
-              <Button variant="outline" onClick={() => setFilter(null)} className="mt-4">
-                View all projects
-              </Button>
+                    <div className="flex gap-3 mt-auto">
+                      <Button asChild variant="default" size="sm" className="flex-1">
+                        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4 mr-2" /> Live Demo
+                        </a>
+                      </Button>
+                      <Button asChild variant="outline" size="sm" className="flex-1">
+                        <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer">
+                          <Github className="h-4 w-4 mr-2" /> Source
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-gray-600 text-lg mb-4">No projects found matching your criteria.</p>
+              <Button onClick={() => {
+                setSearchTerm("");
+                setSelectedCategory(null);
+              }}>View All Projects</Button>
             </div>
           )}
           
           {/* Call to Action */}
           <motion.div
-            className="text-center mt-16 bg-primary/5 rounded-xl p-8"
+            className="mt-16 bg-primary/5 rounded-xl p-8 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Interested in working together?</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Interested in collaborating?</h2>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+              I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.
             </p>
             <Button asChild size="lg">
-              <Link href="/contact" className="gap-2">
-                Get In Touch <ArrowRight size={16} />
-              </Link>
+              <a href="/contact">Get in Touch</a>
             </Button>
           </motion.div>
         </div>

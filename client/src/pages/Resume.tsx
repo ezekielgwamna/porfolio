@@ -1,265 +1,328 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Briefcase, GraduationCap, Award } from "lucide-react";
+import { Calendar, MapPin, Building, GraduationCap, Download, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { personalInfo } from "@/constants/data";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Sample resume data that would come from the shared data file
-const workExperience = [
+// Sample resume data
+const experiences = [
   {
-    id: 1,
-    position: "Senior Full Stack Developer",
+    title: "Senior Full Stack Engineer",
     company: "Tech Innovations Inc.",
-    duration: "2020 - Present",
-    location: "New York, NY",
-    description: [
-      "Led the development of a high-traffic e-commerce platform using React, Node.js, and PostgreSQL",
-      "Implemented CI/CD pipelines reducing deployment time by 40%",
-      "Mentored junior developers and conducted code reviews",
-      "Optimized database queries resulting in 30% faster page load times"
-    ]
-  },
-  {
-    id: 2,
-    position: "Full Stack Developer",
-    company: "WebSolutions Ltd.",
-    duration: "2018 - 2020",
-    location: "Boston, MA",
-    description: [
-      "Developed and maintained multiple client websites using JavaScript, React, and Express",
-      "Built RESTful APIs for mobile applications",
-      "Collaborated with UX/UI designers to implement responsive designs",
-      "Participated in Agile development cycles and sprint planning"
-    ]
-  },
-  {
-    id: 3,
-    position: "Frontend Developer",
-    company: "CreativeDigital",
-    duration: "2016 - 2018",
     location: "San Francisco, CA",
+    duration: "Jan 2022 - Present",
     description: [
-      "Created responsive web interfaces using HTML5, CSS3, and JavaScript",
-      "Implemented state management with Redux for complex SPAs",
-      "Worked with backend developers to integrate frontend with APIs",
-      "Utilized webpack and Babel for modern JavaScript bundling"
+      "Lead the development of a high-traffic e-commerce platform using React, Node.js, and PostgreSQL, resulting in a 35% increase in conversion rates",
+      "Implemented microservices architecture to improve scalability and reduce deployment time by 40%",
+      "Collaborated with a team of 8 developers using Agile methodologies, leading sprint planning and code reviews",
+      "Optimized database queries and implemented caching strategies, reducing average page load time by 2.5 seconds"
+    ]
+  },
+  {
+    title: "Full Stack Developer",
+    company: "Digital Solutions Ltd.",
+    location: "New York, NY",
+    duration: "May 2019 - Dec 2021",
+    description: [
+      "Developed and maintained multiple web applications for clients in finance, healthcare, and retail sectors",
+      "Built RESTful APIs and GraphQL endpoints that processed over 1 million requests per day",
+      "Implemented CI/CD pipelines using GitHub Actions, reducing deployment errors by 75%",
+      "Mentored junior developers and led technical workshops on React and Node.js best practices"
+    ]
+  },
+  {
+    title: "Frontend Developer",
+    company: "Web Creations Studio",
+    location: "Boston, MA",
+    duration: "Aug 2017 - Apr 2019",
+    description: [
+      "Created responsive, cross-browser compatible web interfaces using HTML5, CSS3, and JavaScript",
+      "Transformed design mockups into functional web pages with pixel-perfect accuracy",
+      "Integrated third-party APIs for payment processing, social media, and analytics",
+      "Collaborated with designers to improve UX and implement accessibility standards (WCAG 2.1)"
     ]
   }
 ];
 
 const education = [
   {
-    id: 1,
     degree: "Master of Science in Computer Science",
-    institution: "Stanford University",
-    duration: "2014 - 2016",
-    location: "Stanford, CA",
-    description: [
-      "Specialized in Artificial Intelligence and Machine Learning",
-      "Research assistant for Natural Language Processing lab",
-      "GPA: 3.9/4.0"
-    ]
+    institution: "Massachusetts Institute of Technology",
+    location: "Cambridge, MA",
+    duration: "2015 - 2017",
+    description: "Specialized in Software Engineering and Distributed Systems. Graduated with a 3.9 GPA. Thesis on 'Optimizing Distributed Database Performance in Cloud Environments'."
   },
   {
-    id: 2,
     degree: "Bachelor of Science in Software Engineering",
-    institution: "Massachusetts Institute of Technology",
-    duration: "2010 - 2014",
-    location: "Cambridge, MA",
-    description: [
-      "Graduated with honors",
-      "President of the Computer Science Club",
-      "Capstone Project: Developed a real-time collaborative code editor"
-    ]
+    institution: "University of California, Berkeley",
+    location: "Berkeley, CA",
+    duration: "2011 - 2015",
+    description: "Dean's List for all semesters. Participated in the ACM programming competition. Completed internships at Google and Microsoft."
   }
 ];
 
 const certifications = [
   {
-    id: 1,
-    name: "AWS Certified Solutions Architect",
+    name: "AWS Certified Solutions Architect – Professional",
     issuer: "Amazon Web Services",
-    year: "2022",
-    description: "Professional certification for designing distributed systems on AWS"
+    date: "2022",
+    url: "https://aws.amazon.com/certification/certified-solutions-architect-professional/"
   },
   {
-    id: 2,
-    name: "Google Professional Cloud Developer",
+    name: "Google Cloud Professional Cloud Architect",
     issuer: "Google Cloud",
-    year: "2021",
-    description: "Advanced certification for building scalable applications on Google Cloud Platform"
+    date: "2021",
+    url: "https://cloud.google.com/certification/cloud-architect"
   },
   {
-    id: 3,
-    name: "Certified Kubernetes Administrator (CKA)",
-    issuer: "Cloud Native Computing Foundation",
-    year: "2020",
-    description: "Expertise in managing Kubernetes clusters and containerized applications"
+    name: "MongoDB Certified Developer Associate",
+    issuer: "MongoDB",
+    date: "2020",
+    url: "https://university.mongodb.com/certification"
   }
 ];
 
-const Resume = () => {
-  const [activeTab, setActiveTab] = useState("experience");
+const skills = [
+  {
+    category: "Programming Languages",
+    items: ["JavaScript (ES6+)", "TypeScript", "Python", "Go", "SQL", "HTML5", "CSS3"]
+  },
+  {
+    category: "Frameworks & Libraries",
+    items: ["React", "Next.js", "Node.js", "Express", "Django", "TailwindCSS", "Redux", "GraphQL"]
+  },
+  {
+    category: "Tools & Platforms",
+    items: ["Git", "Docker", "Kubernetes", "AWS", "Google Cloud", "CI/CD", "Webpack", "Jest"]
+  },
+  {
+    category: "Methodologies",
+    items: ["Agile/Scrum", "Test-Driven Development", "CI/CD", "Microservices", "RESTful APIs"]
+  }
+];
 
-  // Function to handle resume download
-  const handleDownloadResume = () => {
-    // In a real implementation, this would link to the actual PDF file
-    window.open("/Ezekiel_Gwamna_Resume.pdf", "_blank");
-  };
-
+const ResumePage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <motion.h1 
-              className="text-4xl md:text-5xl font-bold mb-4"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              My Resume
-            </motion.h1>
-            <div className="h-1 w-20 bg-primary mx-auto mb-6 rounded-full"></div>
-            <p className="text-gray-600 max-w-3xl mx-auto mb-8">
-              A comprehensive overview of my professional experience, education, and certifications.
-              Feel free to download a copy for your reference.
-            </p>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+              <motion.h1 
+                className="text-4xl md:text-5xl font-bold mb-4"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Resume
+              </motion.h1>
+              <div className="h-1 w-20 bg-primary mb-4 rounded-full"></div>
+            </div>
             
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Button 
-                onClick={handleDownloadResume} 
-                className="gap-2"
-                size="lg"
-              >
-                Download Resume <Download size={16} />
+              <Button asChild size="lg" className="shadow-md">
+                <a href={personalInfo.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download PDF
+                </a>
               </Button>
             </motion.div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <Tabs defaultValue="experience" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="experience" className="text-sm md:text-base">
-                  <Briefcase className="mr-2 h-4 w-4 hidden md:inline" />
-                  Experience
-                </TabsTrigger>
-                <TabsTrigger value="education" className="text-sm md:text-base">
-                  <GraduationCap className="mr-2 h-4 w-4 hidden md:inline" />
-                  Education
-                </TabsTrigger>
-                <TabsTrigger value="certifications" className="text-sm md:text-base">
-                  <Award className="mr-2 h-4 w-4 hidden md:inline" />
-                  Certifications
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="experience" className="pt-2">
-                <div className="space-y-8">
-                  {workExperience.map((job) => (
-                    <motion.div 
-                      key={job.id}
-                      className="border-l-2 border-primary pl-6 relative"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: job.id * 0.1 }}
-                    >
-                      <div className="absolute w-4 h-4 bg-primary rounded-full -left-[9px] top-0"></div>
-                      <h3 className="text-xl font-bold text-gray-800">{job.position}</h3>
-                      <div className="flex flex-wrap items-center gap-2 text-gray-600 mb-2">
-                        <span className="font-medium">{job.company}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                        <span>{job.duration}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                        <span>{job.location}</span>
+          {/* Profile Summary */}
+          <motion.section
+            className="bg-white rounded-xl shadow-md p-8 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Professional Summary</h2>
+            <p className="text-gray-700 leading-relaxed">
+              Full-stack software engineer with over 7 years of experience designing and developing web applications 
+              across various domains including e-commerce, fintech, and digital marketing. Experienced in all phases 
+              of the software development lifecycle with expertise in React, Node.js, and cloud infrastructure. 
+              Strong problem-solving abilities and a passion for writing clean, efficient, and maintainable code.
+            </p>
+          </motion.section>
+          
+          {/* Experience */}
+          <motion.section
+            className="bg-white rounded-xl shadow-md p-8 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <h2 className="text-2xl font-bold mb-6">Professional Experience</h2>
+            
+            <div className="space-y-8">
+              {experiences.map((exp, index) => (
+                <div key={index} className={index !== experiences.length - 1 ? "pb-8 border-b border-gray-200" : ""}>
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
+                      <div className="flex items-center text-gray-700 mt-1">
+                        <Building className="h-4 w-4 mr-2" />
+                        <span>{exp.company}</span>
                       </div>
-                      <ul className="mt-3 space-y-1">
-                        {job.description.map((item, index) => (
-                          <li key={index} className="text-gray-600 flex items-start">
-                            <span className="text-primary mr-2">•</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  ))}
+                    </div>
+                    <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <span>{exp.duration}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600 mt-1">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        <span>{exp.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {exp.description.map((item, itemIndex) => (
+                      <li key={itemIndex} className="flex">
+                        <span className="text-primary mr-2">•</span>
+                        <span className="text-gray-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="education" className="pt-2">
-                <div className="space-y-8">
-                  {education.map((edu) => (
-                    <motion.div 
-                      key={edu.id}
-                      className="border-l-2 border-primary pl-6 relative"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: edu.id * 0.1 }}
-                    >
-                      <div className="absolute w-4 h-4 bg-primary rounded-full -left-[9px] top-0"></div>
-                      <h3 className="text-xl font-bold text-gray-800">{edu.degree}</h3>
-                      <div className="flex flex-wrap items-center gap-2 text-gray-600 mb-2">
-                        <span className="font-medium">{edu.institution}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+              ))}
+            </div>
+          </motion.section>
+          
+          {/* Education */}
+          <motion.section
+            className="bg-white rounded-xl shadow-md p-8 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold mb-6">Education</h2>
+            
+            <div className="space-y-8">
+              {education.map((edu, index) => (
+                <div key={index} className={index !== education.length - 1 ? "pb-8 border-b border-gray-200" : ""}>
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{edu.degree}</h3>
+                      <div className="flex items-center text-gray-700 mt-1">
+                        <GraduationCap className="h-4 w-4 mr-2" />
+                        <span>{edu.institution}</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 md:mt-0 flex flex-col items-start md:items-end">
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="h-4 w-4 mr-2" />
                         <span>{edu.duration}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                      </div>
+                      <div className="flex items-center text-gray-600 mt-1">
+                        <MapPin className="h-4 w-4 mr-2" />
                         <span>{edu.location}</span>
                       </div>
-                      <ul className="mt-3 space-y-1">
-                        {edu.description.map((item, index) => (
-                          <li key={index} className="text-gray-600 flex items-start">
-                            <span className="text-primary mr-2">•</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  ))}
+                    </div>
+                  </div>
+                  <p className="mt-2 text-gray-700">{edu.description}</p>
                 </div>
-              </TabsContent>
+              ))}
+            </div>
+          </motion.section>
+          
+          {/* Skills & Certifications Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Skills */}
+            <motion.section
+              className="bg-white rounded-xl shadow-md p-8 md:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <h2 className="text-2xl font-bold mb-6">Skills</h2>
               
-              <TabsContent value="certifications" className="pt-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {certifications.map((cert) => (
-                    <motion.div 
-                      key={cert.id}
-                      className="bg-gray-50 rounded-lg p-5 border border-gray-200"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: cert.id * 0.1 }}
+              <div className="space-y-6">
+                {skills.map((skillGroup, index) => (
+                  <div key={index}>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">{skillGroup.category}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {skillGroup.items.map((skill, skillIndex) => (
+                        <Badge key={skillIndex} variant="secondary" className="px-3 py-1 text-sm">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                    {index !== skills.length - 1 && <Separator className="mt-4" />}
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+            
+            {/* Certifications */}
+            <motion.section
+              className="bg-white rounded-xl shadow-md p-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <h2 className="text-2xl font-bold mb-6">Certifications</h2>
+              
+              <div className="space-y-4">
+                {certifications.map((cert, index) => (
+                  <div key={index} className={index !== certifications.length - 1 ? "pb-4 border-b border-gray-200" : ""}>
+                    <h3 className="font-semibold text-gray-900">{cert.name}</h3>
+                    <div className="flex items-center text-gray-700 mt-1">
+                      <Building className="h-4 w-4 mr-2" />
+                      <span>{cert.issuer}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600 mt-1">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span>{cert.date}</span>
+                    </div>
+                    <a 
+                      href={cert.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center text-primary hover:underline mt-2"
                     >
-                      <h3 className="text-xl font-bold text-gray-800">{cert.name}</h3>
-                      <div className="flex items-center gap-2 text-gray-600 mb-3">
-                        <span>{cert.issuer}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                        <span>{cert.year}</span>
-                      </div>
-                      <p className="text-gray-600">{cert.description}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
+                      <Link2 className="h-4 w-4 mr-1" />
+                      <span>Verify</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
           </div>
           
-          <div className="text-center mt-12">
-            <h2 className="text-2xl font-bold mb-4">Interested in working together?</h2>
+          {/* Call to Action */}
+          <motion.div
+            className="bg-primary/5 rounded-xl p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Want to work together?</h2>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.
+              I'm currently available for freelance work and full-time positions. Let's discuss how I can contribute 
+              to your team or project.
             </p>
-            <Button asChild>
-              <a href="/#contact">Get In Touch</a>
-            </Button>
-          </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg">
+                <a href="/contact">Get in Touch</a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <a href={personalInfo.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download Resume
+                </a>
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </main>
       
@@ -268,4 +331,4 @@ const Resume = () => {
   );
 };
 
-export default Resume;
+export default ResumePage;
