@@ -1,45 +1,23 @@
-// Cloudflare Pages Configuration
-
+// Cloudflare Pages configuration
 export default {
-  // Build configuration
-  build: {
-    command: "npm run build:cloudflare",
-    outputDirectory: "dist/public", // Matches the Vite build output directory
-    environment: {
-      NODE_VERSION: "18" // Use Node.js 18 for building
+  // This function handles all incoming requests to the deployed application
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    
+    // Return a custom 404 page if a file is not found
+    try {
+      // Attempt to serve the requested file
+      return await env.ASSETS.fetch(request);
+    } catch (e) {
+      // If the file is not found, we'll return the index.html
+      // This enables client-side routing to work properly
+      if (url.pathname.startsWith('/api/')) {
+        // Return a 404 for API routes that don't exist
+        return new Response('Not Found', { status: 404 });
+      } else {
+        // For all other routes, serve the index.html to allow the SPA router to handle it
+        return env.ASSETS.fetch(`${url.origin}/index.html`);
+      }
     }
-  },
-
-  // Optional: Configure headers
-  headers: [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, s-maxage=86400"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    }
-  ],
-
-  // Handle client-side routing redirections
-  routes: [
-    { 
-      "source": "/(.*)",
-      "destination": "/index.html" 
-    }
-  ]
+  }
 };

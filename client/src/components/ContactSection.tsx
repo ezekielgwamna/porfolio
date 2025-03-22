@@ -2,13 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import emailjs from '@emailjs/browser';
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { personalInfo } from "@/constants/data";
-import { apiRequest } from "@/lib/queryClient";
-import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, MapPin, Mail, Send } from "lucide-react";
 
@@ -23,6 +23,8 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 const ContactSection = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -34,30 +36,49 @@ const ContactSection = () => {
     }
   });
 
-  const mutation = useMutation({
-    mutationFn: async (values: ContactFormValues) => {
-      const response = await apiRequest("POST", "/api/contact", values);
-      return response.json();
-    },
-    onSuccess: () => {
+  // Using EmailJS for client-side form submission (works with static hosting like Cloudflare Pages)
+  const onSubmit = async (values: ContactFormValues) => {
+    try {
+      setIsSubmitting(true);
+      
+      // These environment variables should be set in Cloudflare Pages dashboard
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+      
+      if (!serviceId || !templateId || !publicKey) {
+        // Fall back to server API if EmailJS config is missing
+        throw new Error('EmailJS configuration is missing');
+      }
+      
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message
+        },
+        publicKey
+      );
+      
       toast({
         title: "Message sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
         variant: "default",
       });
       form.reset();
-    },
-    onError: (error) => {
+    } catch (error) {
+      console.error('Contact form error:', error);
       toast({
         title: "Failed to send message",
-        description: error.message || "Please try again later.",
+        description: "There was an error sending your message. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
-  });
-
-  const onSubmit = (values: ContactFormValues) => {
-    mutation.mutate(values);
   };
 
   return (
@@ -230,9 +251,9 @@ const ContactSection = () => {
                   <Button 
                     type="submit" 
                     className="w-full gap-2"
-                    disabled={mutation.isPending}
+                    disabled={isSubmitting}
                   >
-                    {mutation.isPending ? "Sending..." : "Send Message"}
+                    {isSubmitting ? "Sending..." : "Send Message"}
                     <Send size={16} />
                   </Button>
                 </form>
