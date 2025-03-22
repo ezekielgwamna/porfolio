@@ -40,11 +40,9 @@ const Header = () => {
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 shadow-sm" : "bg-transparent"}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <Link href="/">
-            <a className="text-xl font-bold">
-              <span className="text-primary">Ezekiel</span>
-              <span className="text-emerald-500">.</span>
-            </a>
+          <Link href="/" className="text-xl font-bold">
+            <span className="text-primary">Ezekiel</span>
+            <span className="text-emerald-500">.</span>
           </Link>
           
           {/* Desktop Navigation */}
