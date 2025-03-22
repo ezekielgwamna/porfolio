@@ -47,32 +47,40 @@ const Header = () => {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {["home", "about", "skills", "projects", "contact"].map((item) => (
-              <a
-                key={item}
-                href={`#${item}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(item);
-                }}
-                className={`transition duration-300 hover:text-primary ${
-                  location === `/#${item}` ? "text-primary font-semibold" : ""
-                }`}
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-              </a>
-            ))}
+            <Link href="/"
+              className={`transition duration-300 hover:text-primary ${
+                location === "/" ? "text-primary font-semibold" : ""
+              }`}
+            >
+              Home
+            </Link>
+            <Link href="/projects"
+              className={`transition duration-300 hover:text-primary ${
+                location === "/projects" ? "text-primary font-semibold" : ""
+              }`}
+            >
+              Projects
+            </Link>
+            <Link href="/blog"
+              className={`transition duration-300 hover:text-primary ${
+                location === "/blog" ? "text-primary font-semibold" : ""
+              }`}
+            >
+              Blog
+            </Link>
+            <Link href="/contact"
+              className={`transition duration-300 hover:text-primary ${
+                location === "/contact" ? "text-primary font-semibold" : ""
+              }`}
+            >
+              Contact
+            </Link>
           </nav>
           
           {/* Resume Button */}
-          <a
-            href={personalInfo.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:block"
-          >
+          <Link href="/resume" className="hidden md:block">
             <Button variant="default">Resume</Button>
-          </a>
+          </Link>
           
           {/* Mobile Menu Button */}
           <button
@@ -95,31 +103,39 @@ const Header = () => {
               className="md:hidden pb-4"
             >
               <nav className="flex flex-col space-y-4">
-                {["home", "about", "skills", "projects", "contact"].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection(item);
-                    }}
-                    className={`px-2 py-1 ${
-                      location === `/#${item}` ? "text-primary font-semibold" : ""
-                    }`}
-                  >
-                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </a>
-                ))}
-                <a
-                  href={personalInfo.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2"
+                <Link href="/"
+                  className={`px-2 py-1 ${
+                    location === "/" ? "text-primary font-semibold" : ""
+                  }`}
                 >
+                  Home
+                </Link>
+                <Link href="/projects"
+                  className={`px-2 py-1 ${
+                    location === "/projects" ? "text-primary font-semibold" : ""
+                  }`}
+                >
+                  Projects
+                </Link>
+                <Link href="/blog"
+                  className={`px-2 py-1 ${
+                    location === "/blog" ? "text-primary font-semibold" : ""
+                  }`}
+                >
+                  Blog
+                </Link>
+                <Link href="/contact"
+                  className={`px-2 py-1 ${
+                    location === "/contact" ? "text-primary font-semibold" : ""
+                  }`}
+                >
+                  Contact
+                </Link>
+                <Link href="/resume" className="mt-2">
                   <Button className="w-full" variant="default">
                     Resume
                   </Button>
-                </a>
+                </Link>
               </nav>
             </motion.div>
           )}
